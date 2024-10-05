@@ -17,19 +17,26 @@ public class LoginTest extends BaseIntegration{
 		signin = driver.findElement(By.id("submit"));
 	}
 	
-	@Test
-	public void doLogin() {
-		email.sendKeys("queuecodes@gmail.com");
-		pass.sendKeys("123456");
+	@Test(dataProvider = "loginData")
+	public void doLogin(String testName, String uName, String uPass) {
+		tName = testName;
+		email.sendKeys(uName);
+		pass.sendKeys(uPass);
 		signin.click();;
 	}
 	
 	@AfterMethod
-	public void doAssert() {
+	public void doAssert() throws InterruptedException {
 		String actResult = driver.getTitle();
-		String expResult = "Queue Codes | Dashboard";
+		String expResult;
+		if(tName.equals("Both are valid")) {
+			expResult = "Queue Codes | Dashboard";
+			doLogout();
+		}else {
+			expResult = "Queue Codes | Log in";
+		}
 		Assert.assertEquals(actResult, expResult);
-		doLogout();
+		Thread.sleep(2000);
 	}
 	
 	public void doLogout() {
